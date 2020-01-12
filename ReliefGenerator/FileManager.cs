@@ -22,6 +22,12 @@ namespace ReliefGenerator
         {
             using (StreamWriter fileWriter = new StreamWriter(_path))
             {
+                // Save map Y-dimention:
+                fileWriter.WriteLine(mapDepths.GetLength(0));
+
+                // Save map X-dimention:
+                fileWriter.WriteLine(mapDepths.GetLength(1));
+
                 for (int i = 0; i < mapDepths.GetLength(0); i++)
                 {
                     for (int k = 0; k < mapDepths.GetLength(1); k++)
