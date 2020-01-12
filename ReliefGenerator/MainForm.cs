@@ -46,49 +46,76 @@ namespace ReliefGenerator
 
         public void CreateField(Panel panelField, int xFieldSize, int yFieldSize)
         {
-            _field = new Panel[yFieldSize, xFieldSize];
-            _fieldDepths = new int[yFieldSize, xFieldSize];
-
-            int xLocation = 10;
-            int yLocation = 10;
-
-            int xLocationStart = xLocation;
-            int yLocationStart = yLocation;
-
-            int xSize = 50;
-            int ySize = 50;
-
-            for (int i = 0; i < yFieldSize; i++)
+            try
             {
-                for (int k = 0; k < xFieldSize; k++)
+                _field = new Panel[yFieldSize, xFieldSize];
+                _fieldDepths = new int[yFieldSize, xFieldSize];
+
+                int xLocation = 10;
+                int yLocation = 10;
+
+                int xLocationStart = xLocation;
+                int yLocationStart = yLocation;
+
+                int xSize = 50;
+                int ySize = 50;
+
+                for (int i = 0; i < yFieldSize; i++)
                 {
-                    _field[i, k] = new Panel();
-                    _field[i, k].Location = new Point(xLocation, yLocation);
-                    _field[i, k].Size = new Size(xSize, ySize);
-                    _field[i, k].BackColor = Color.Gray;
-                    _field[i, k].Click += new EventHandler(HandleFieldClick);
+                    for (int k = 0; k < xFieldSize; k++)
+                    {
+                        _field[i, k] = new Panel();
+                        _field[i, k].Location = new Point(xLocation, yLocation);
+                        _field[i, k].Size = new Size(xSize, ySize);
+                        _field[i, k].BackColor = Color.Gray;
+                        _field[i, k].Click += new EventHandler(HandleFieldClick);
 
-                    panelField.Controls.Add(_field[i, k]);
+                        panelField.Controls.Add(_field[i, k]);
 
-                    xLocation += xSize + 5;
+                        xLocation += xSize + 5;
+                    }
+
+                    xLocation = xLocationStart;
+                    yLocation += ySize + 5;
                 }
-
-                xLocation = xLocationStart;
-                yLocation += ySize + 5;
+            }
+            catch
+            {
+                MessageBox.Show("Create field error!");
             }
         }
 
         private void HandleFieldClick(object sender, EventArgs e)
         {
-            int blueDegree = 255 - (int)(255 * Convert.ToInt32(textBox_depth.Text) / 100 * 0.66);
+            try
+            {
+                int blueDegree = 0;
+                int greenDegree = 0;
+                int redDegree = 0;
 
-            Panel clickedPanel = (Panel)sender;
-            clickedPanel.BackColor = Color.FromArgb(70, 70, blueDegree);
+                if (Convert.ToInt32(textBox_depth.Text) < 0)
+                {
+                    greenDegree = 105;
+                    redDegree = 115;
+                    blueDegree = 0;
+                }
+                else
+                {
+                    blueDegree = 255 - (int)(255 * Convert.ToInt32(textBox_depth.Text) / 100 * 0.66);
+                }
 
-            // Saving depth info:
-            int[] clickedObjectIndexes = FindObjIndexesByPanel(clickedPanel);
+                Panel clickedPanel = (Panel)sender;
+                clickedPanel.BackColor = Color.FromArgb(redDegree, greenDegree, blueDegree);
 
-            _fieldDepths[clickedObjectIndexes[0], clickedObjectIndexes[1]] = Convert.ToInt32(textBox_depth.Text);
+                // Saving depth info:
+                int[] clickedObjectIndexes = FindObjIndexesByPanel(clickedPanel);
+
+                _fieldDepths[clickedObjectIndexes[0], clickedObjectIndexes[1]] = Convert.ToInt32(textBox_depth.Text);
+            }
+            catch
+            {
+                MessageBox.Show("Input error!");
+            }
         }
 
         private int[] FindObjIndexesByPanel(Panel panel)
@@ -109,7 +136,14 @@ namespace ReliefGenerator
 
         private void button_saveMap_Click(object sender, EventArgs e)
         {
-            _fileManager.SaveMap(_fieldDepths);
+            try
+            {
+                _fileManager.SaveMap(_fieldDepths);
+            }
+            catch
+            {
+                MessageBox.Show("Save error!");
+            }
         }
     }
 }
